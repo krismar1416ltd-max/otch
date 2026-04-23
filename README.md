@@ -1,4 +1,3 @@
-# otch
 <!DOCTYPE html>
 <html>
 <head>
@@ -79,7 +78,7 @@ document.getElementById("file").onchange = e => {
         devices = reader.result.split("\n").map(l => {
             let c = l.split(",");
             return {
-                num: (c[0] || "").trim(), // важно
+                num: (c[0] || "").trim(),
                 addr: c[1],
                 ap: c[2],
                 current: "",
@@ -123,7 +122,7 @@ function startScan() {
                 let digits = raw.replace(/\D/g, "");
                 let code = "";
 
-                // 📌 EAN13 → взима вътрешните 8 цифри
+                // 📌 EAN13 → вътрешни 8 цифри
                 if (digits.length === 13) {
                     code = digits.substring(3, 11);
                 } else {
@@ -136,9 +135,21 @@ function startScan() {
                     "\n➡️ Код: " + code
                 );
 
-                currentDevice = devices.find(d =>
-                    String(d.num).trim() === code
-                );
+                // ✅ СИГУРНО СЪВПАДЕНИЕ
+                currentDevice = devices.find(d => {
+
+                    let csvNum = String(d.num)
+                        .replace(/\D/g, "")
+                        .trim();
+
+                    let scanNum = String(code)
+                        .replace(/\D/g, "")
+                        .trim();
+
+                    console.log("CSV:", csvNum, "SCAN:", scanNum);
+
+                    return csvNum === scanNum;
+                });
 
                 setTimeout(() => {
                     alert(
@@ -159,6 +170,7 @@ function startScan() {
 
 /* ---------------- SAVE DATA ---------------- */
 function saveData() {
+
     if (!currentDevice) return alert("Сканирай първо");
 
     currentDevice.current = document.getElementById("current").value;
@@ -197,7 +209,7 @@ function render() {
             `<div class="card">
                 <b>${d.num}</b><br>
                 ${d.addr}<br>
-                ${d.current || "-"}
+                📊 ${d.current || "-"}
             </div>`
         ).join("");
 }
@@ -234,4 +246,3 @@ render();
 
 </body>
 </html>
-otch
